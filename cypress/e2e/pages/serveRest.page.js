@@ -7,6 +7,11 @@ class CadastroPage {
         cy.contains('Cadastro realizado com sucesso').should('be.visible');
 
     }
+
+    produto() {
+        cy.contains('Produtos').should('be.visible')
+        cy.get(':nth-child(1) > .card-body').click() 
+    }
   }
   
   export default new CadastroPage();

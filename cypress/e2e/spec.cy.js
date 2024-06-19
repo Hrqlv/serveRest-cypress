@@ -6,10 +6,16 @@ import { faker } from '@faker-js/faker';
 
 describe('ServeRest Tests', () => {
   beforeEach(() => {
-    cy.visit('https://front.serverest.dev/cadastrarusuarios')
+    cy.visit("/")
   })
 
   it('Realizar cadastro', () => { 
-    CadastroPage.cadastro(faker.internet.userName(), faker.internet.email(), faker.internet.password());
+    CadastroPage.cadastro(faker.internet.userName(),
+    faker.internet.email(),
+    faker.internet.password());
   });
+
+  it('Adicionar um produto na lista', () => {
+    CadastroPage.produto()
+  })
 });
