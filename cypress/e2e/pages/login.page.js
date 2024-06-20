@@ -3,7 +3,7 @@ class LoginPage {
         this.url = 'https://serverest.dev';
       }
 
-    login() {
+    realizarLogin() {
       return cy.request({
         method: 'POST',
         url: `${this.url}/login`, 
