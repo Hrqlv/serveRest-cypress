@@ -20,4 +20,8 @@ describe('ServeRest Tests', () => {
     CadastroPage.adicionarProdutoNoCarrinho()
     CadastroPage.validarMensagem()
   })
+
+  it('Validar mensagens de erro na tela de cadastro', () => {
+    
+  })
 });
