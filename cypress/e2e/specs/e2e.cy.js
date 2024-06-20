@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-import CadastroPage from '../pages/serveRest.page';
+import CadastroPage from '../pages/e2e.page';
 import { faker } from '@faker-js/faker';
 
 let user;
@@ -14,7 +14,7 @@ beforeEach(() => {
   cy.visit('/');
 });
 
-describe('ServeRest Tests - Fluxos Positivo', () => {
+describe('ServeRest Tests - Fluxos Positivo - E2E', () => {
   it('Realizar cadastro e logo adicionar produto na sequência', () => {
     CadastroPage.realizarCadastro(user.username,
       user.email,
