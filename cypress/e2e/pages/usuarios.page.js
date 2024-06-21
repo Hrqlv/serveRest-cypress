@@ -1,6 +1,7 @@
 class UsuariosPage {
   constructor() {
     this.url = 'https://serverest.dev';
+    this.authToken = '';
   }
   
   postUsuarios(name, email, password, adm) {
