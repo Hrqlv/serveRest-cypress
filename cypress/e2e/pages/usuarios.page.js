@@ -3,7 +3,7 @@ class UsuariosPage {
         this.url = 'https://serverest.dev';
       }
 
-    pegarListaUsuarios() {
+    obterListaUsuarios() {
       return cy.request({
         method: 'GET',
         url: `${this.url}/usuarios`, 
