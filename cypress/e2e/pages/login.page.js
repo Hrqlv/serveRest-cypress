@@ -3,22 +3,18 @@ class LoginPage {
         this.url = 'https://serverest.dev';
       }
 
-    realizarLogin() {
+    realizarLogin(email, senha) {
       return cy.request({
         method: 'POST',
         url: `${this.url}/login`, 
         body: {
-            "email": "fulano@qa.com",
-            "password": "teste"
+            email: email,
+            password: senha
           },
         headers: {
           'Content-Type': 'application/json'
         }
-      }).then((response) => {
-        expect(response.status).to.eq(200);
-        expect(response.body.message).to.eq('Login realizado com sucesso');
-        Cypress.env('authToken', response.body.token);
-      });
+      })
     }
   }
   
