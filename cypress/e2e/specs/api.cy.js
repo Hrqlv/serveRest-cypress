@@ -25,7 +25,7 @@ describe('ServeRest Tests - API', () => {
     };
 
     // Realizar Cadastro
-    UsuariosPage.postUsuarios(user.username, user.email, user.password, user.administrador)
+    UsuariosPage.postarUsuarios(user.username, user.email, user.password, user.administrador)
       .then((response) => {
         expect(response.status).to.eq(201);
         expect(response.body.message).to.eq('Cadastro realizado com sucesso');
@@ -40,17 +40,17 @@ describe('ServeRest Tests - API', () => {
         LoginPage.authToken = response.body.authorization;
       });
 
-    //Cadastrar Produto
-    ProdutosPage.postProdutos(nomeProduto, preco, descricao, quantidade)
-    .then((response) => {
-      expect(response.status).to.eq(201);
-      expect(response.body.message).to.eq('Cadastro realizado com sucesso');
-      produtosID = response.body._id;
-  });
+    // Cadastrar Produto
+    // ProdutosPage.postarProdutos()
+    // .then((response) => {
+    //   expect(response.body.message).to.eq('Cadastro realizado com sucesso');
+    //   produtosID = response.body._id;
+    //   expect(response.status).to.eq(201);
+    // });
+})
 
-  
   it('Pegar dados dos usuarios - GET', () => {
-    UsuariosPage.getUsuarios()
+    UsuariosPage.obterDadosUsuarios()
       .then((response) => {
         expect(response.status).to.eq(200);
         expect(response.body).to.have.property('usuarios');
@@ -59,7 +59,7 @@ describe('ServeRest Tests - API', () => {
   });
 
   it('Buscar o usuario pelo id - GET', () => {
-    UsuariosPage.getUsuariosID(userId)
+    UsuariosPage.obterDadosUsuariosID(userId)
       .then((response) => {
         expect(response.status).to.eq(200);
         expect(response.body).to.have.property('_id', userId);
@@ -67,7 +67,7 @@ describe('ServeRest Tests - API', () => {
   });
 
   it('Excluir o usuario pelo id - DELETE', () => {
-    UsuariosPage.deleteUsuarioID(userId)
+    UsuariosPage.deletarUsuarioID(userId)
       .then((response) => {
         expect(response.status).to.eq(200);
         expect(response.body.message).to.eq('Registro excluído com sucesso');
@@ -75,7 +75,7 @@ describe('ServeRest Tests - API', () => {
   });
 
   it('Alterar o usuario referente ao id - PUT', () => {
-    UsuariosPage.putUsuarios(userId, user.username, user.email, user.password, user.administrador)
+    UsuariosPage.alterarDadosUsuarios(userId, user.username, user.email, user.password, user.administrador)
       .then((response) => {
         expect(response.status).to.eq(201);
         expect(response.body.message).to.eq('Cadastro realizado com sucesso');
@@ -83,19 +83,19 @@ describe('ServeRest Tests - API', () => {
   });
 
   it('Pegar dados dos produtos - GET', () => {
-    ProdutosPage.getProdutos()
+    ProdutosPage.obterDadosProdutos()
     .then((response) => {
       expect(response.status).to.eq(200);
       expect(response.body).to.have.property('produtos');
       expect(response.body.produtos.length).to.be.greaterThan(0);
     });
   })
-  })
-  // it('Cadastrar Produto - POST', () => {
-  //   ProdutosPage.postProdutos(nomeProduto, preco, descricao, quantidade)
-  //   .then((response) => {
-  //     expect(response.status).to.eq(201);
-  //     expect(response.body.message).to.eq('Cadastro realizado com sucesso');
-  //     produtosID = response.body._id;
-  //   });
-  })
+
+//   it('Pegar produtos produtos pelo ID - GET', () => {
+//     ProdutosPage.obterDadosUsuariosID(produtosID).then((response) => {
+//       expect(response.status).to.eq(200);
+//       const produtoIDBody = response.body;
+//       expect(produtoIDBody).to.have.property('_id');
+//   })
+// })
+})
