@@ -1,21 +1,22 @@
 class LoginPage {
     constructor() {
         this.url = 'https://serverest.dev';
+        // this.authToken = '';
       }
 
-    realizarLogin(email, senha) {
-      return cy.request({
-        method: 'POST',
-        url: `${this.url}/login`, 
-        body: {
+      realizarLogin(email, password) {
+        return cy.request({
+          method: 'POST',
+          url: `${this.url}/login`,
+          body: {
             email: email,
-            password: senha
+            password: password
           },
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      })
-    }
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+      }
   }
   
   export default new LoginPage();

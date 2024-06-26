@@ -1,9 +1,7 @@
-// cypress/e2e/pages/produtos.page.js
-
 class ProdutosPage {
   constructor() {
     this.url = 'https://serverest.dev';
-    this.authToken = '';
+    this.authToken = null;
   }
 
   postarProdutos(name, preco, descricao, quantidade) {
