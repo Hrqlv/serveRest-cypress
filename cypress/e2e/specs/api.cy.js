@@ -1,100 +1,150 @@
 /// <reference types="cypress" />
 
+import ServicesAPI from '../pages/servicesAPI.page';
 import { faker } from '@faker-js/faker';
-import UsuariosPage from '../pages/usuarios.page';
-import LoginPage from '../pages/login.page';
-import ProdutosPage from '../pages/produtos.page'
 
-let user, userId;
-let produtosID;
-
-const nomeProduto = `${faker.commerce.productName()}-${faker.datatype.uuid()}`;
-const preco = faker.datatype.number({ min: 1, max: 1000 });
-const descricao = faker.lorem.words(3);
-const quantidade = faker.datatype.number({ min: 1, max: 100 });
-
+let user, userId, authToken, produtosID, carrinhoID;
 
 describe('ServeRest Tests - API', () => {
-
-  before(() => {
-    user = {                                                   
-      username: faker.internet.userName(),
+  beforeEach(() => {
+    user = {
+      nome: faker.internet.userName(),
       email: faker.internet.email(),
       password: faker.internet.password(),
       administrador: 'true'
     };
 
-    // Realizar Cadastro
-    UsuariosPage.postarUsuarios(user.username, user.email, user.password, user.administrador)
-      .then((response) => {
-        expect(response.status).to.eq(201);
-        expect(response.body.message).to.eq('Cadastro realizado com sucesso');
-        userId = response.body._id;
-      });
+    // Realizar Cadastro e Login
+    cy.wrap(null).then(() => {
+      return ServicesAPI.postUsuarios(user.nome, user.email, user.password, user.administrador)
+        .then((response) => {
+          expect(response.status).to.eq(201);
+          expect(response.body.message).to.eq('Cadastro realizado com sucesso');
+          userId = response.body._id;
+        });
+    }).then(() => {
+      return ServicesAPI.postLogin(user.email, user.password)
+        .then((response) => {
+          authToken = response.body.authorization;
+          expect(authToken).to.not.be.null;
+          ServicesAPI.authToken = authToken;
+        });
+    });
+  });
 
-    // Realizar Login
-    LoginPage.realizarLogin(user.email, user.password)
-      .then((response) => {
-        expect(response.status).to.eq(200);
-        expect(response.body.message).to.eq('Login realizado com sucesso');
-        LoginPage.authToken = response.body.authorization;
-      });
+  it('Teste de Login - API', () => {
+    // Verificar se o login retorna o token de autorização
+    expect(authToken).to.not.be.null;
+  });
 
-    // Cadastrar Produto
-    // ProdutosPage.postarProdutos(nomeProduto, preco, descricao, quantidade)
-    // .then((response) => {
-    //   expect(response.body.message).to.eq('Cadastro realizado com sucesso');
-    //   produtosID = response.body._id;
-    //   expect(response.status).to.eq(201);
-    // });
-})
-
-  it('Fluxo de usuarios - API', () => {
-    UsuariosPage.obterDadosUsuarios()
+  it('Fluxo de Usuários - API', () => {
+    // Listar todos os usuários
+    ServicesAPI.getUsuarios()
       .then((response) => {
         expect(response.status).to.eq(200);
         expect(response.body).to.have.property('usuarios');
         expect(response.body.usuarios.length).to.be.greaterThan(0);
       });
 
-    UsuariosPage.obterDadosUsuariosID(userId)
+    // Obter detalhes de um usuário específico
+    ServicesAPI.getUsuariosID(userId)
       .then((response) => {
         expect(response.status).to.eq(200);
         expect(response.body).to.have.property('_id', userId);
       });
 
-    UsuariosPage.deletarUsuarioID(userId)
+    // Deletar um usuário
+    ServicesAPI.deleteUsuarioID(userId)
       .then((response) => {
         expect(response.status).to.eq(200);
         expect(response.body.message).to.eq('Registro excluído com sucesso');
       });
+  });
 
-    UsuariosPage.alterarDadosUsuarios(userId, user.username, user.email, user.password, user.administrador)
+  it('Fluxo de Produtos - API', () => {
+    const nomeProduto = `${faker.commerce.productName()}-${faker.datatype.uuid()}`; 
+    const preco = faker.datatype.number({ min: 1, max: 1000 });
+    const descricao = faker.lorem.words(3);
+    const quantidade = faker.datatype.number({ min: 1, max: 100 });
+
+    // Criar um novo produto
+    ServicesAPI.postProdutos(nomeProduto, preco, descricao, quantidade)
       .then((response) => {
         expect(response.status).to.eq(201);
         expect(response.body.message).to.eq('Cadastro realizado com sucesso');
+        produtosID = response.body._id;
+
+        // Listar todos os produtos
+        return ServicesAPI.getProdutos().then((response) => {
+          expect(response.status).to.eq(200);
+          expect(response.body).to.have.property('produtos');
+          expect(response.body.produtos.length).to.be.greaterThan(0);
+        });
+      }).then(() => {
+        // Obter detalhes de um produto específico
+        return ServicesAPI.getProdutosID(produtosID).then((response) => {
+          expect(response.status).to.eq(200);
+          expect(response.body).to.have.property('_id');
+        });
+      }).then(() => {
+        // Atualizar um produto
+        const novoNome = `${faker.commerce.productName()}-${faker.datatype.uuid()}`;
+        return ServicesAPI.putProdutosID(produtosID, novoNome, preco, descricao, quantidade).then((response) => {
+          expect(response.status).to.eq(200);
+          expect(response.body.message).to.eq('Registro alterado com sucesso');
+        });
+      }).then(() => {
+        // Deletar um produto
+        return ServicesAPI.deleteProduto(produtosID).then((response) => {
+          expect(response.status).to.eq(200);
+          expect(response.body.message).to.eq('Registro excluído com sucesso');
+        });
       });
-    })
+  });
 
-  it('Fluxo de produtos - API', () => {
-    ProdutosPage.obterDadosProdutos()
-    .then((response) => {
-      expect(response.status).to.eq(200);
-      expect(response.body).to.have.property('produtos');
-      expect(response.body.produtos.length).to.be.greaterThan(0);
-    });
+  it('Fluxo de Carrinho - API', () => {
+    const nomeProduto = `${faker.commerce.productName()}-${faker.datatype.uuid()}`; 
+    const preco = faker.datatype.number({ min: 1, max: 1000 });
+    const descricao = faker.lorem.words(3);
+    const quantidade = faker.datatype.number({ min: 1, max: 100 });
 
-    ProdutosPage.postarProdutos(nomeProduto, preco, descricao, quantidade)
-    .then((response) => {
-      expect(response.body.message).to.eq('Cadastro realizado com sucesso');
-      produtosID = response.body._id;
-      expect(response.status).to.eq(201);
-    });
+    // Criar um novo produto
+    ServicesAPI.postProdutos(nomeProduto, preco, descricao, quantidade)
+      .then((response) => {
+        expect(response.status).to.eq(201);
+        expect(response.body.message).to.eq('Cadastro realizado com sucesso');
+        produtosID = response.body._id;
 
-    ProdutosPage.pegarDadosProdutosID(produtosID).then((response) => {
-      expect(response.status).to.eq(200);
-      const produtoIDBody = response.body;
-      expect(produtoIDBody).to.have.property('_id');
-  })
-  })
-})
+        // Adicionar o produto ao carrinho
+        return ServicesAPI.postCarrinho(produtosID, quantidade)
+          .then((response) => {
+            expect(response.status).to.eq(201);
+            carrinhoID = response.body._id;
+            return carrinhoID;
+          });
+      }).then(() => {
+        // Listar carrinhos
+        return ServicesAPI.getCarrinho().then((response) => {
+          expect(response.status).to.eq(200);
+          expect(response.body).to.have.property('carrinhos');
+          expect(response.body.carrinhos.length).to.be.greaterThan(0);
+        });
+      }).then(() => {
+        // Obter detalhes do carrinho por ID
+        return ServicesAPI.getCarrinhoID(carrinhoID).then((response) => {
+          expect(response.status).to.eq(200);
+          expect(response.body).to.have.property('_id', carrinhoID);
+        });
+      }).then(() => {
+        // Concluir a compra
+        return ServicesAPI.concluirCompra(carrinhoID).then((response) => {
+          expect(response.status).to.eq(200);
+        });
+      }).then(() => {
+        // Cancelar a compra
+        return ServicesAPI.cancelarCompra(carrinhoID).then((response) => {
+          expect(response.status).to.eq(200);
+        });
+      });
+  });
+});
