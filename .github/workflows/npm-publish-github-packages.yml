@@ -23,8 +23,10 @@ jobs:
       - name: Install Cypress globally
         run: npm install -g cypress
 
+      - name: Install dependencies
+        run: npm install
 
-      - name: Install Cypress globally
-        run: npm install -g cypress
+      - name: Run Cypress tests
+        run: cypress run
         env:
           CI: true
