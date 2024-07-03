@@ -20,10 +20,11 @@ jobs:
         with:
           node-version: '16'
 
-      - name: Install dependencies
-        run: npm install
+      - name: Install Cypress globally
+        run: npm install -g cypress
 
-      - name: Run Cypress tests
-        run: npm run cy:run
+
+      - name: Install Cypress globally
+        run: npm install -g cypress
         env:
           CI: true
