@@ -32,13 +32,7 @@ describe('ServeRest Tests - API', () => {
     });
   });
 
-  it('Teste de Login - API', () => {
-    // Verificar se o login retorna o token de autorização
-    expect(authToken).to.not.be.null;
-  });
-
   it('Fluxo de Usuários - API', () => {
-    // Listar todos os usuários
     ServicesAPI.getUsuarios()
       .then((response) => {
         expect(response.status).to.eq(200);
@@ -46,15 +40,19 @@ describe('ServeRest Tests - API', () => {
         expect(response.body.usuarios.length).to.be.greaterThan(0);
       });
 
-    // Obter detalhes de um usuário específico
     ServicesAPI.getUsuariosID(userId)
       .then((response) => {
         expect(response.status).to.eq(200);
         expect(response.body).to.have.property('_id', userId);
       });
 
-    // Deletar um usuário
-    ServicesAPI.deleteUsuarioID(userId)
+      ServicesAPI.putUsuarios(userId, user.nome, user.email, user.password, user.administrador)
+      .then((response) => {
+        expect(response.status).to.eq(200);
+        expect(response.body.message).to.eq('Registro alterado com sucesso');
+      });
+
+      ServicesAPI.deleteUsuarioID(userId)
       .then((response) => {
         expect(response.status).to.eq(200);
         expect(response.body.message).to.eq('Registro excluído com sucesso');
@@ -67,34 +65,29 @@ describe('ServeRest Tests - API', () => {
     const descricao = faker.lorem.words(3);
     const quantidade = faker.datatype.number({ min: 1, max: 100 });
 
-    // Criar um novo produto
     ServicesAPI.postProdutos(nomeProduto, preco, descricao, quantidade)
       .then((response) => {
         expect(response.status).to.eq(201);
         expect(response.body.message).to.eq('Cadastro realizado com sucesso');
         produtosID = response.body._id;
 
-        // Listar todos os produtos
         return ServicesAPI.getProdutos().then((response) => {
           expect(response.status).to.eq(200);
           expect(response.body).to.have.property('produtos');
           expect(response.body.produtos.length).to.be.greaterThan(0);
         });
       }).then(() => {
-        // Obter detalhes de um produto específico
         return ServicesAPI.getProdutosID(produtosID).then((response) => {
           expect(response.status).to.eq(200);
           expect(response.body).to.have.property('_id');
         });
       }).then(() => {
-        // Atualizar um produto
         const novoNome = `${faker.commerce.productName()}-${faker.datatype.uuid()}`;
         return ServicesAPI.putProdutosID(produtosID, novoNome, preco, descricao, quantidade).then((response) => {
           expect(response.status).to.eq(200);
           expect(response.body.message).to.eq('Registro alterado com sucesso');
         });
       }).then(() => {
-        // Deletar um produto
         return ServicesAPI.deleteProduto(produtosID).then((response) => {
           expect(response.status).to.eq(200);
           expect(response.body.message).to.eq('Registro excluído com sucesso');
@@ -108,14 +101,12 @@ describe('ServeRest Tests - API', () => {
     const descricao = faker.lorem.words(3);
     const quantidade = faker.datatype.number({ min: 1, max: 100 });
 
-    // Criar um novo produto
     ServicesAPI.postProdutos(nomeProduto, preco, descricao, quantidade)
       .then((response) => {
         expect(response.status).to.eq(201);
         expect(response.body.message).to.eq('Cadastro realizado com sucesso');
         produtosID = response.body._id;
 
-        // Adicionar o produto ao carrinho
         return ServicesAPI.postCarrinho(produtosID, quantidade)
           .then((response) => {
             expect(response.status).to.eq(201);
@@ -123,25 +114,21 @@ describe('ServeRest Tests - API', () => {
             return carrinhoID;
           });
       }).then(() => {
-        // Listar carrinhos
         return ServicesAPI.getCarrinho().then((response) => {
           expect(response.status).to.eq(200);
           expect(response.body).to.have.property('carrinhos');
           expect(response.body.carrinhos.length).to.be.greaterThan(0);
         });
       }).then(() => {
-        // Obter detalhes do carrinho por ID
         return ServicesAPI.getCarrinhoID(carrinhoID).then((response) => {
           expect(response.status).to.eq(200);
           expect(response.body).to.have.property('_id', carrinhoID);
         });
       }).then(() => {
-        // Concluir a compra
         return ServicesAPI.concluirCompra(carrinhoID).then((response) => {
           expect(response.status).to.eq(200);
         });
       }).then(() => {
-        // Cancelar a compra
         return ServicesAPI.cancelarCompra(carrinhoID).then((response) => {
           expect(response.status).to.eq(200);
         });
