@@ -1,5 +1,6 @@
 
-  class CadastroPage {
+  class CadastroProdutoPage {
+
     realizarCadastro(user = '', email = '', password = '') {
         cy.get('[data-testid="nome"]').type(user);
         cy.get('[data-testid="email"]').type(email);
@@ -31,4 +32,4 @@
     }
   }
   
-  export default new CadastroPage();
+  export default new CadastroProdutoPage();

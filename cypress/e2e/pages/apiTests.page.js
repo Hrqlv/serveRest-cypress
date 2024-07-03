@@ -1,4 +1,5 @@
 class ServicesAPI {
+  
   constructor() {
     this.authToken = null;
     this.urlBase = 'https://serverest.dev';

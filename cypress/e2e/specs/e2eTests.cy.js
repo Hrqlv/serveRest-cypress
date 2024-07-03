@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-import CadastroPage from '../pages/e2e.page';
+import CadastroProdutoPage from '../pages/e2eTests.page';
 import { faker } from '@faker-js/faker';
 
 let user;
@@ -16,17 +16,17 @@ beforeEach(() => {
 
 describe('ServeRest Tests - Fluxos Positivo - E2E', () => {
   it('Realizar cadastro e logo adicionar produto na sequência', () => {
-    CadastroPage.realizarCadastro(user.username,
+    CadastroProdutoPage.realizarCadastro(user.username,
       user.email,
       user.password)
-    CadastroPage.adicionarProduto();
-    CadastroPage.adicionarProdutoNoCarrinho()
-    CadastroPage.validarMensagem()
+    CadastroProdutoPage.adicionarProduto();
+    CadastroProdutoPage.adicionarProdutoNoCarrinho()
+    CadastroProdutoPage.validarMensagem()
   })
 });
 
 describe('Fluxos negativo', () => {
   it('Validar mensagens de erro na tela de cadastro', () => {
-    CadastroPage.validarMensagensErroTelaCadastro()
+    CadastroProdutoPage.validarMensagensErroTelaCadastro()
   })
 })
