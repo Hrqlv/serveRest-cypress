@@ -8,6 +8,6 @@
     "faker": "^6.6.6"
   },
   "scripts": {
-    "cy:run": "cypress run"
+    "cy:run": "npx cypress run"
   }
 }
