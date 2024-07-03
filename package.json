@@ -6,5 +6,8 @@
   "dependencies": {
     "cypress-plugin-api": "^2.11.1",
     "faker": "^6.6.6"
+  },
+  "scripts": {
+    "cy:run": "cypress run"
   }
 }
