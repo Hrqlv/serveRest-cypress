@@ -9,6 +9,5 @@
   },
   "scripts": {
     "cy:run": "npx cypress run"
-  },
-  "projectId": "zcsojw"
+  }
 }
